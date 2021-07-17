@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@master
 
       # Step 2: Substitute environment variables
-      - uses: nowactions/envsubst@v1
+      - uses: danielr1996/envsubst-action@1.1.0
         env:
           HOST: ${{ secrets.HOST }}
         with:
@@ -27,7 +27,7 @@ jobs:
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }} # required, should match up with your deploy targets (see below)
 
       # Step 4: Deploy!
-      - name: Deploy to Staging
+      - name: Deploy to Prod
         uses: JorgenVatle/docker-compose-deploy@v1.0
         with:
           deploy_targets: '${{ secrets.HOST }}' # required, comma separated list of servers to deploy to.
