@@ -21,7 +21,7 @@ jobs:
 
       # Step 3: Add SSH credentials to your GitHub CI/CD instance
       - name: Add SSH Credentials
-        uses: shimatoro/ssh-key-action@v2
+        uses: shimataro/ssh-key-action@v2.3.0
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }} # required, this will be used when transferring files to your deploy targets
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }} # required, should match up with your deploy targets (see below)
