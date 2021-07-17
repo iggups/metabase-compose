@@ -3,32 +3,35 @@ on:
     branches:
       - master
 
-runs-on: ubuntu-latest
-steps:
-  # Step 1: Checkout
-  - uses: actions/checkout@master
+name: Deploy docker-compose
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout
+      - uses: actions/checkout@master
 
-  # Step 2: Substitute environment variables
-  - uses: danielr1996/envsubst-action@1.1.0
-    env:
-      HOST: ${{ secrets.HOST }}
-    with:
-      input: nginx/conf.d/sites-available/metabase.conf.template
-      output: nginx/conf.d/sites-enabled/metabase.conf
+      # Step 2: Substitute environment variables
+      - uses: danielr1996/envsubst-action@1.1.0
+        env:
+          HOST: ${{ secrets.HOST }}
+        with:
+          input: nginx/conf.d/sites-available/metabase.conf.template
+          output: nginx/conf.d/sites-enabled/metabase.conf
 
-  # Step 3: Add SSH credentials to your GitHub CI/CD instance
-  - name: Add SSH Credentials
-    uses: shimatoro/ssh-key-action@v2
-    with:
-      key: ${{ secrets.SSH_PRIVATE_KEY }} # required, this will be used when transferring files to your deploy targets
-      known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }} # required, should match up with your deploy targets (see below)
+      # Step 3: Add SSH credentials to your GitHub CI/CD instance
+      - name: Add SSH Credentials
+        uses: shimatoro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # required, this will be used when transferring files to your deploy targets
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }} # required, should match up with your deploy targets (see below)
 
-  # Step 4: Deploy!
-  - name: Deploy to Staging
-    uses: JorgenVatle/docker-compose-deploy@v1.0
-    with:
-      deploy_targets: '${{ secrets.HOST }}' # required, comma separated list of servers to deploy to.
+      # Step 4: Deploy!
+      - name: Deploy to Staging
+        uses: JorgenVatle/docker-compose-deploy@v1.0
+        with:
+          deploy_targets: '${{ secrets.HOST }}' # required, comma separated list of servers to deploy to.
 
-      ssh_user: 'henry.hesse' # optional, user to connect to deploy targets with. Defaults to 'root'
-      compose_file: 'docker-compose.yml' # optional, path/filename of your docker-compose file. Defaults to 'docker-compose.yml'
-      validate_container: 'metabase' # optional, validate that the given container name is running. Otherwise, throw an error. Defaults to 'app'
+          ssh_user: 'henry.hesse' # optional, user to connect to deploy targets with. Defaults to 'root'
+          compose_file: 'docker-compose.yml' # optional, path/filename of your docker-compose file. Defaults to 'docker-compose.yml'
+          validate_container: 'metabase' # optional, validate that the given container name is running. Otherwise, throw an error. Defaults to 'app'
