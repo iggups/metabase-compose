@@ -18,6 +18,7 @@ jobs:
         deploy_path: /opt/metabase
         stack_file_name: docker-compose.yml
         keep_files: 5
+        args: metabase
 
 #name: Deploy docker-compose
 #jobs:
