@@ -16,8 +16,8 @@ jobs:
         env:
           HOST: ${{ secrets.HOST }}
         with:
-          input: nginx/conf.d/sites-available/metabase.conf.template
-          output: nginx/conf.d/sites-enabled/metabase.conf
+          input: ${{ env.GITHUB_WORKSPACE }}/nginx/conf.d/sites-available/metabase.conf.template
+          output: ${{ env.GITHUB_WORKSPACE }}/nginx/conf.d/sites-enabled/metabase.conf
 
       # Step 3: Add SSH credentials to your GitHub CI/CD instance
       - name: Add SSH Credentials
