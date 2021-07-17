@@ -25,6 +25,8 @@ services:
       - 'db'
 
   metabase:
+    container_name: metabase
+    hostname: metabase
     image: metabase/metabase
     restart: always
     environment:
@@ -44,6 +46,16 @@ services:
       - 'mb-data:/metabase-data'
     depends_on:
       - 'db'
+  reverse:
+    container_name: reverse
+    hostname: reverse
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx:/etc/nginx
+      # - ./ssl:/etc/ssl/private
 
 volumes:
   db-data:
