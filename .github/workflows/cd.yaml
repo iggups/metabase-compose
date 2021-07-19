@@ -4,59 +4,31 @@ on:
       - dev
 
 jobs:
-  Deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to Docker swarm
-      uses: wshihadeh/docker-deployment-action@v1
+    - uses: actions/checkout@v2
+    - name: set metabase host name
+    - uses: nowactions/envsubst@v1.0.1
+      env:
+        HOST: ${{ secrets.HOST }}
       with:
-        remote_docker_host: ${{ secrets.SSH_HOST }}
-        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        ssh_public_key: ${{ secrets.SSH_KNOWN_HOSTS }}
-        deployment_mode: docker-compose
-        copy_stack_file: false
-        deploy_path: /opt/metabase
-        stack_file_name: docker-compose.yml
-        keep_files: 5
-        args: metabase
-
-#name: Deploy docker-compose
-#jobs:
-#  Deploy:
-#    runs-on: ubuntu-latest
-#    steps:
-#      # Step 1: Checkout
-#      - uses: actions/checkout@master
-#
-#      # Step 2: Set nginx metabase host name
-#      - uses: nowactions/envsubst@v1.0.1
-#        env:
-#          HOST: ${{ secrets.HOST }}
-#        with:
-#          input: ${{ github.workspace }}/nginx/conf.d/sites-available/metabase.conf.template
-#          output: ${{ github.workspace }}/nginx/conf.d/sites-enabled/metabase.conf
-#
-#      # Step 3: Set environment variables
-#      - uses: nowactions/envsubst@v1.0.1
-#        env:
-#          HOST: ${{ secrets.POSTGRES_PASSWORD }}
-#        with:
-#          input: ${{ github.workspace }}/.env.template
-#          output: ${{ github.workspace }}/.env
-#
-#      # Step 3: Add SSH credentials to your GitHub CI/CD instance
-#      - name: Add SSH Credentials
-#        uses: shimataro/ssh-key-action@v2.3.0
-#        with:
-#          key: ${{ secrets.SSH_PRIVATE_KEY }} # required, this will be used when transferring files to your deploy targets
-#          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }} # required, should match up with your deploy targets (see below)
-#
-#      # Step 4: Deploy!
-#      - name: Deploy to Prod
-#        uses: JorgenVatle/docker-compose-deploy@v1.0
-#        with:
-#          deploy_targets: '${{ secrets.HOST }}' # required, comma separated list of servers to deploy to.
-#
-#          ssh_user: 'henry.hesse' # optional, user to connect to deploy targets with. Defaults to 'root'
-#          compose_file: 'docker-compose.yml' # optional, path/filename of your docker-compose file. Defaults to 'docker-compose.yml'
-#          validate_container: 'metabase' # optional, validate that the given container name is running. Otherwise, throw an error. Defaults to 'app'
+        input: ${{ github.workspace }}/nginx/conf.d/sites-available/metabase.conf.template
+        output: ${{ github.workspace }}/nginx/conf.d/sites-enabled/metabase.conf
+    - name: set environment variables
+    - uses: nowactions/envsubst@v1.0.1
+      env:
+        HOST: ${{ secrets.POSTGRES_PASSWORD }}
+      with:
+        input: ${{ github.workspace }}/.env.template
+        output: ${{ github.workspace }}/.env
+    - name: rsync deployments
+      uses: burnett01/rsync-deployments@4.1
+      with:
+        switches: -avzr --delete
+        path: ''
+        remote_path: /opt/metabase/
+        remote_host: ${{ secrets.HOST }}
+        remote_port: 22
+        remote_user: ${{ secrets.SSH_USER }}
+        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
