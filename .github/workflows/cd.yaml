@@ -4,19 +4,19 @@ on:
       - dev
 
 jobs:
-  deploy:
+  configure:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: set metabase host name
-    - uses: nowactions/envsubst@v1.0.1
+      uses: nowactions/envsubst@v1.0.1
       env:
         HOST: ${{ secrets.HOST }}
       with:
         input: ${{ github.workspace }}/nginx/conf.d/sites-available/metabase.conf.template
         output: ${{ github.workspace }}/nginx/conf.d/sites-enabled/metabase.conf
     - name: set environment variables
-    - uses: nowactions/envsubst@v1.0.1
+      uses: nowactions/envsubst@v1.0.1
       env:
         HOST: ${{ secrets.POSTGRES_PASSWORD }}
       with:
