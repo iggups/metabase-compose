@@ -8,6 +8,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: set metabase host name
+      uses: nowactions/envsubst@v1.0.1
+      env:
+        HOST: ${{ secrets.HOST }}
+      with:
+        input: ${{ github.workspace }}/nginx/conf.d/sites-available/metabase.conf.template
+        output: ${{ github.workspace }}/nginx/conf.d/sites-enabled/metabase.conf
+    - name: set environment variables
+      uses: nowactions/envsubst@v1.0.1
+      env:
+        HOST: ${{ secrets.POSTGRES_PASSWORD }}
+      with:
+        input: ${{ github.workspace }}/.env.template
+        output: ${{ github.workspace }}/.env
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
@@ -17,32 +31,3 @@ jobs:
         remote_port: 22
         remote_user: ${{ secrets.SSH_USER }}
         remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-#jobs:
-#  configure:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: set metabase host name
-#      uses: nowactions/envsubst@v1.0.1
-#      env:
-#        HOST: ${{ secrets.HOST }}
-#      with:
-#        input: ${{ github.workspace }}/nginx/conf.d/sites-available/metabase.conf.template
-#        output: ${{ github.workspace }}/nginx/conf.d/sites-enabled/metabase.conf
-#    - name: set environment variables
-#      uses: nowactions/envsubst@v1.0.1
-#      env:
-#        HOST: ${{ secrets.POSTGRES_PASSWORD }}
-#      with:
-#        input: ${{ github.workspace }}/.env.template
-#        output: ${{ github.workspace }}/.env
-#    - name: rsync deployments
-#      uses: burnett01/rsync-deployments@4.1
-#      with:
-#        switches: -avzr --delete
-#        remote_path: /opt/metabase/
-#        remote_host: ${{ secrets.HOST }}
-#        remote_port: 22
-#        remote_user: ${{ secrets.SSH_USER }}
-#        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
