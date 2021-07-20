@@ -8,13 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: set host name
-      run: envsubst '$${HOST}' < metabase.conf.template > ../sites-enabled/metabase.conf
-      working-directory: ${{ github.workspace }}/nginx/conf.d/sites-available
-      env:
-        HOST: ${{ secrets.HOST }}
     - name: set environment variables
-      run: envsubst '${DB_PASSWORD}' < .env.template > .env
+      run: envsubst '${DB_PASSWORD},${HOST},${LETSENCRYPT_EMAIL}' < .env.template > .env
       working-directory: ${{ github.workspace }}
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
