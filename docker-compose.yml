@@ -17,6 +17,8 @@ services:
       - type: volume
         source: ${DB_OUTSIDE_VOLUME}
         target: ${DB_INSIDE_VOLUME}
+    networks:
+      service_network:
 
   adminer:
     image: adminer
