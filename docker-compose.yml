@@ -11,6 +11,8 @@ services:
         db_password: ${DB_PASSWORD}
         db_port: ${DB_PORT}
     restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - type: volume
         source: ${DB_OUTSIDE_VOLUME}
