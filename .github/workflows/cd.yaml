@@ -13,6 +13,8 @@ jobs:
       working-directory: ${{ github.workspace }}
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        HOST: ${{ secrets.HOST }}
+        LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
