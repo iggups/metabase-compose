@@ -19,16 +19,16 @@ services:
         target: ${DB_INSIDE_VOLUME}
     networks:
       service_network:
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - '${ADMINER_PORT}:8080'
-    depends_on:
-      - 'db'
-    networks:
-      service_network:
+#
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - '${ADMINER_PORT}:8080'
+#    depends_on:
+#      - 'db'
+#    networks:
+#      service_network:
 
   metabase:
     container_name: metabase
@@ -47,7 +47,7 @@ services:
       VIRTUAL_HOST: '${MB_HOSTNAME}'
       LETSENCRYPT_HOST: '${MB_HOSTNAME}'
       LETSENCRYPT_EMAIL: '${LETSENCRYPT_EMAIL}'
-      VIRTUAL_PORT: '3000'
+      HTTP_PORT: '3000'
     ports:
       # <Port exposed>:<Port running inside container>
       - '${MB_PORT}:3000'
@@ -56,6 +56,16 @@ services:
       - 'mb-data:/metabase-data'
     depends_on:
       - 'db'
+    networks:
+      service_network:
+
+  web-redirect:
+    image: adamkdean/redirect
+    environment:
+      VIRTUAL_HOST: '${MB_HOSTNAME}'
+      LETSENCRYPT_HOST: '${MB_HOSTNAME}'
+      LETSENCRYPT_EMAIL: '${LETSENCRYPT_EMAIL}'
+      REDIRECT_LOCATION: 'https://${MB_HOSTNAME}'
     networks:
       service_network:
 
