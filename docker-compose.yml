@@ -61,6 +61,7 @@ services:
 
   web-redirect:
     image: adamkdean/redirect
+    restart: always
     environment:
       VIRTUAL_HOST: 'www.${MB_HOSTNAME}'
       LETSENCRYPT_HOST: 'www.${MB_HOSTNAME}'
@@ -71,6 +72,7 @@ services:
 
   nginx-proxy:
     image: nginxproxy/nginx-proxy
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -85,6 +87,7 @@ services:
 
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
+    restart: always
     environment:
       NGINX_PROXY_CONTAINER: "nginx-proxy"
     networks:
