@@ -9,12 +9,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: set environment variables
-      run: envsubst '${DB_PASSWORD},${HOST},${LETSENCRYPT_EMAIL}' < .env.template > .env
+      run: envsubst '${DB_PASSWORD},${HOST},${LETSENCRYPT_EMAIL},${MB_ENCRYPTION_SECRET_KEY}' < .env.template > .env
       working-directory: ${{ github.workspace }}
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         HOST: ${{ secrets.HOST }}
         LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
+        MB_ENCRYPTION_SECRET_KEY: ${{ secrets.MB_ENCRYPTION_SECRET_KEY }}
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
